@@ -1,4 +1,3 @@
-# Plotly interactive version
 import numpy as np
 import plotly.graph_objects as go
 import ipywidgets as widgets
@@ -44,3 +43,4 @@ slider.observe(update_plot, names='value')
 display(slider, fig)
 # initial
 update_plot({'new': slider.value})
+
