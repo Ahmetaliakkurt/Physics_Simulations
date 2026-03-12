@@ -3,6 +3,7 @@ import random
 import time
 import pygame
 import os
+import cv2  # Video oluşturmak için eklendi
 
 pygame.init()
 SCREEN_WIDTH = 600
@@ -19,6 +20,11 @@ YELLOW = (255, 255, 0)
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Graf Sudoku Çözücü")
+
+# --- VİDEO KAYDI İÇİN EKLENDİ ---
+FRAMES_DIR = "sudoku_frames"
+FRAME_COUNT = 0
+# ---------------------------------
 
 initial_board_mask = None
 
@@ -46,6 +52,9 @@ def draw_grid(screen, board, highlight_cell=None):
     pygame.draw.rect(screen, BLACK, (0, SCREEN_WIDTH, SCREEN_WIDTH, SCREEN_HEIGHT - SCREEN_WIDTH), 1)
 
 def update_status(action):
+    # --- VİDEO KAYDI İÇİN GÜNCELLENDİ ---
+    global FRAME_COUNT  # Global sayacı kullan
+    
     status_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT - SCREEN_WIDTH))
     status_surface.fill(GRAY)
     
@@ -53,7 +62,14 @@ def update_status(action):
     status_surface.blit(text, (10, 10))
     
     screen.blit(status_surface, (0, SCREEN_WIDTH))
-    pygame.display.flip()
+
+    # Mevcut ekran görüntüsünü bir dosyaya kaydet
+    #frame_filename = os.path.join(FRAMES_DIR, f"frame_{FRAME_COUNT:06d}.png")
+    #pygame.image.save(screen, frame_filename)
+    #FRAME_COUNT += 1
+    # -------------------------------------
+    
+    pygame.display.flip() # Ekranı güncelle
 
 def find_empty_cell(board):
     for r in range(9):
@@ -108,7 +124,7 @@ def generate_sudoku(clues=25):
         
     return puzzle_board
 
-def solve_sudoku_animated_pygame(board, delay=10):
+def solve_sudoku_animated_pygame(board, delay=0):
     find = find_empty_cell(board)
     if not find:
         draw_grid(screen, board)
@@ -135,15 +151,63 @@ def solve_sudoku_animated_pygame(board, delay=10):
 
             board[row][col] = 0 
             draw_grid(screen, board, (row, col))
-            update_status(f"GERİ İZLEME: ({row+1}, {col+1}) hücresi 0'a sıfırlandı.")
+            #update_status(f"GERİ İZLEME: ({row+1}, {col+1}) hücresi 0'a sıfırlandı.")
             pygame.time.wait(delay)
 
     return False
 
+# --- VİDEO OLUŞTURMAK İÇİN YENİ FONKSİYON ---
+def compile_frames_to_video(frames_dir, output_file, fps=60):
+    """
+    Kaydedilen kareleri bir video dosyasında birleştirir.
+    """
+    print(f"Kareler videoya dönüştürülüyor... Hedef: {output_file}")
+    
+    images = [img for img in os.listdir(frames_dir) if img.endswith(".png")]
+    if not images:
+        print("Video oluşturulamadı, hiç kare bulunamadı.")
+        return
+        
+    # Görüntüleri ada göre sırala (frame_000000.png, frame_000001.png, ...)
+    images.sort(key=lambda x: int(x.split('_')[-1].split('.')[0]))
+
+    # İlk görüntüden videonun boyutlarını al
+    frame_path = os.path.join(frames_dir, images[0])
+    frame = cv2.imread(frame_path)
+    if frame is None:
+        print(f"Hata: İlk kare okunamadı: {frame_path}")
+        return
+        
+    height, width, layers = frame.shape
+
+    # Video yazıcıyı oluştur
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v') # veya 'XVID'
+    video = cv2.VideoWriter(output_file, fourcc, fps, (width, height))
+
+    # Her kareyi videoya yaz
+    for image_name in images:
+        img_path = os.path.join(frames_dir, image_name)
+        img = cv2.imread(img_path)
+        if img is not None:
+            video.write(img)
+        else:
+            print(f"Uyarı: Kare okunamadı: {img_path}")
+
+    video.release()
+    cv2.destroyAllWindows()
+    print(f"Video başarıyla '{output_file}' olarak kaydedildi.")
+# ------------------------------------------
+
 def main():
+    # --- VİDEO KAYDI İÇİN EKLENDİ ---
+    # Kareleri kaydetmek için klasör oluştur
+    if not os.path.exists(FRAMES_DIR):
+        os.makedirs(FRAMES_DIR)
+    # ---------------------------------
+        
     puzzle = generate_sudoku(clues=25) 
     
-    ANIMATION_DELAY_MS = 10 
+    ANIMATION_DELAY_MS = 0
     
     draw_grid(screen, puzzle)
     update_status("Başlangıç Bulmacası (Graf Renklendirmeye Hazır)...")
@@ -161,16 +225,31 @@ def main():
     else:
         final_message = "Çözüm Bulunamadı."
     
+    # --- VİDEO KAYDI İÇİN GÜNCELLENMİŞ BİTİŞ DÖNGÜSÜ ---
+    # Son mesajı 5 saniye boyunca göster ve kareleri kaydet, sonra otomatik çık
+    end_time_display = time.time()
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
         
-        update_status(final_message)
-        pygame.time.wait(100)
+        # Her döngüde son durumu güncelle (ve kareyi kaydet)
+        update_status(final_message) 
+        
+        # 5 saniye geçtiyse veya kullanıcı pencereyi kapattıysa çık
+        if (time.time() - end_time_display > 5.0):
+            running = False
+            
+        pygame.time.wait(100) # CPU'yu yormamak için kısa bir bekleme
+    # ----------------------------------------------------
     
     pygame.quit()
+
+    # --- VİDEO KAYDI İÇİN EKLENDİ ---
+    # Pygame kapandıktan sonra kareleri videoya dönüştür
+    compile_frames_to_video(FRAMES_DIR, "sudoku_cozumu.mp4", fps=60)
+    # ---------------------------------
 
 if __name__ == "__main__":
     main()
