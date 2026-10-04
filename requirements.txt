@@ -1,0 +1,23 @@
+# Python dependencies for the scripts in 01_classical – 04_special_projects.
+# The web app in 05_physics_lab_app needs none of these.
+#
+# Install:  pip install -r requirements.txt
+
+# --- core (used by almost every script) ---
+numpy>=1.24
+matplotlib>=3.7
+
+# 1.15+ provides sph_harm_y  (02_statistical/central_force_field_atom.py)
+# <1.17 still provides sph_harm (03_quantum/central_force_field_atom.py, hydrogen_atom.py)
+scipy>=1.15,<1.17
+
+# --- used by individual scripts ---
+plotly>=5.20            # 03_quantum/gaussian_packet.py, hydrogen_atom.py
+sympy>=1.12             # 01_classical/taylor_exps.py
+pygame-ce>=2.5          # 04_special_projects/f35_escape.py, track_destroy.py, sudoku_solver_graph_pygame.py
+                        # (community edition, still "import pygame"; the original package has no Python 3.14 wheels)
+opencv-python>=4.8      # 04_special_projects/sudoku_solver_graph_pygame.py (video export)
+
+# tkinter is used by some scripts; it ships with the standard Python installer.
+# 02_statistical/ideal_gas_system/main.py needs the compiled C++ module "fast_ensemble"
+# (pybind11 + CMake + OpenMP) — see the README.
