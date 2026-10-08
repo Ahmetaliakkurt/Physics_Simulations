@@ -1,6 +1,6 @@
 # Physics Simulations
 
-Physics simulations and numerical projects from my physics education and personal research — from Python scripts to an interactive browser lab with 32 real-time simulations.
+Physics simulations and numerical projects from my physics education and personal research — from Python scripts to an interactive browser lab with 33 real-time simulations.
 
 ---
 
@@ -35,7 +35,7 @@ Physics_Simulations/
 │   └── ideal_gas_system/   Ideal gas with a C++ (pybind11 + OpenMP) engine
 ├── 03_quantum/             Schrödinger-equation solvers & atomic physics
 ├── 04_special_projects/    Algorithms & games (Sudoku solver, pursuit–evasion)
-├── 05_physics_lab_app/     Interactive web app (32 simulations, zero dependencies)
+├── 05_physics_lab_app/     Interactive web app (33 simulations, zero dependencies)
 ├── requirements.txt        Python dependencies for folders 01–04
 └── README.md
 ```
@@ -102,10 +102,10 @@ Physics_Simulations/
 ## 05_physics_lab_app
 
 ### What it is
-A browser app that brings the projects above together — 32 simulations computed live at 60 FPS, each with a write-up of the equations solved and the numerical method used.
+A browser app that brings the projects above together — 33 simulations computed live at 60 FPS, each with a write-up of the equations solved and the numerical method used.
 
 ### Contents
-- **Classical Physics** — projectile motion with drag, double pendulum, Kepler orbits, coupled oscillators, electric & magnetic fields, charged particles in E/B fields, Faraday induction, RLC circuits, lens design, Taylor series
+- **Classical Physics** — projectile motion with drag, double pendulum, Kepler orbits, coupled oscillators, electric & magnetic fields, charged particles in E/B fields, electron in a field with a field-free window, Faraday induction, RLC circuits, lens design, Taylor series
 - **Statistical Physics** — random walk, central limit theorem, quantum statistics, ideal gas, atomic orbitals
 - **Quantum Mechanics** — potential wells, wave packets, tunnelling, double slit, hydrogen atom, Stern–Gerlach
 - **Special Projects** — Sudoku solver, missile evasion
@@ -133,7 +133,7 @@ None — any modern browser.
 Python 3.10+ and the packages in `requirements.txt` (NumPy, SciPy, Matplotlib, Plotly, SymPy, pygame-ce, OpenCV).
 
 ### C++ ideal-gas engine (optional)
-`02_statistical/ideal_gas_system/main.py` needs the compiled `fast_ensemble` module. The included build is for Linux / Python 3.10; to rebuild it you need CMake, a C++17 compiler with OpenMP and `pybind11`:
+`02_statistical/ideal_gas_system/main.py` needs the compiled `fast_ensemble` module. The included build is for Linux / Python 3.10. To rebuild it you need CMake, GCC (C++17, OpenMP) and `pybind11` — on Windows, use WSL:
 
 ```bash
 cd 02_statistical/ideal_gas_system

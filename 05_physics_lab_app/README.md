@@ -1,6 +1,6 @@
 # Physics Simulation Lab
 
-32 interactive simulations in classical, statistical and quantum physics, computed live in the browser at 60 fps.
+33 interactive simulations in classical, statistical and quantum physics, computed live in the browser at 60 fps.
 
 ## How to open
 Double-click `index.html` (or `run.bat`). No Python, no installation and no internet connection are needed.
@@ -9,7 +9,7 @@ A recent browser (Chrome, Edge or Firefox) is recommended.
 ## Contents
 - **Classical Physics**
   - Mechanics: projectile motion with air resistance, chaotic double pendulum (trajectories + ensemble statistics), Kepler orbits, coupled oscillators.
-  - Electromagnetism: electric fields of point charges, magnetic fields (Biot–Savart), charged particles in E/B fields, Faraday induction, RLC circuits, electron in a laser pulse.
+  - Electromagnetism: electric fields of point charges, magnetic fields (Biot–Savart), charged particles in E/B fields, an electron in a magnetic field with a field-free window, Faraday induction, RLC circuits, electron in a laser pulse.
   - Optics: lens design.
   - Mathematical methods: tangent planes, Taylor series.
 - **Statistical Physics:** random walk, central limit theorem, quantum statistics, ideal gas (ensemble vs time average), atomic orbitals.
